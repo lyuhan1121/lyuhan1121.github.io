@@ -1,42 +1,128 @@
-<div class="container">
-  <div class="header">
-    <div>
-      <div class="brand">{{ site.title }}</div>
-      <div class="desc">{{ site.description }}</div>
-    </div>
-  </div>
+---
+layout: default
+title: 我的部落格
+---
+<div class="container two-col">
 
-  <!-- 👇 作者介紹區塊 -->
-  <div class="about">
-    <img src="{{ '/assets/img/profile.jpg' | relative_url }}" alt="作者照片">
-    <div class="about-text">
-      <h2>關於我</h2>
-      <p>
-        哈囉！我是某某，一個喜歡閱讀、寫作與程式設計的文青系研究生。  
-        這裡紀錄我的隨筆、研究和生活心得，希望透過文字與更多人交流 🌿
-      </p>
+  <!-- 左側：分類側欄 -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">分類</span>
+      <button class="sidebar-toggle" aria-label="Toggle sidebar">☰</button>
     </div>
-  </div>
-  <!-- 👆 作者介紹區塊 -->
 
-  <div class="grid">
-    {% assign items = site.articles | sort: 'title' %}
-    {% for article in items %}
-    <a class="card" href="{{ article.url | relative_url }}">
-      {% if article.tags and article.tags.size > 0 %}
-        <div class="meta">
-          <span class="badge">{{ article.tags | first }}</span>
-        </div>
-      {% endif %}
-      <h3>{{ article.title }}</h3>
-      <p>
-        {% if article.excerpt %}
-          {{ article.excerpt | strip_html | strip_newlines | truncate: 90 }}
-        {% else %}
-          {{ article.content | strip_html | strip_newlines | truncate: 90 }}
+    <nav class="sidebar-nav">
+      <a href="#tag=__all__" data-tag="__all__" class="cat-link active">全部文章</a>
+
+      {%- comment -%}
+      動態蒐集所有 tags（針對自訂 collection: site.articles）
+      {%- endcomment -%}
+      {% assign _tags_blob = "" %}
+      {% for a in site.articles %}
+        {% if a.tags %}
+          {% for t in a.tags %}
+            {% assign _tags_blob = _tags_blob | append: t | append: "||" %}
+          {% endfor %}
         {% endif %}
-      </p>
-    </a>
-    {% endfor %}
-  </div>
+      {% endfor %}
+      {% assign _tags = _tags_blob | split: "||" | sort %}
+
+      {%- comment -%}
+      去重：用 prev 記錄上一個 tag，若相同則跳過
+      {%- endcomment -%}
+      {% assign _prev = "" %}
+      {% for t in _tags %}
+        {% if t != "" and t != _prev %}
+          <a href="#tag={{ t | uri_escape }}" data-tag="{{ t }}" class="cat-link">{{ t }}</a>
+          {% assign _prev = t %}
+        {% endif %}
+      {% endfor %}
+    </nav>
+  </aside>
+
+  <!-- 右側：主內容 -->
+  <main class="main">
+
+    <div class="header">
+      <div>
+        <div class="brand">{{ site.title }}</div>
+        <div class="desc">{{ site.description }}</div>
+      </div>
+    </div>
+
+    <!-- 作者介紹 -->
+    <div class="about">
+      <img src="{{ '/assets/img/profile.jpg' | relative_url }}" alt="作者照片">
+      <div class="about-text">
+        <h2>關於我</h2>
+        <p>
+          哈囉！我是某某，一個喜歡閱讀、寫作與程式設計的文青系研究生。<br>
+          這裡紀錄我的隨筆、研究和生活心得，希望透過文字與更多人交流 🌿
+        </p>
+      </div>
+    </div>
+
+    <!-- 卡片方格 -->
+    <div id="cards" class="grid">
+      {% assign items = site.articles | sort: 'title' %}
+      {% for article in items %}
+      <a class="card"
+         href="{{ article.url | relative_url }}"
+         data-tags="{% if article.tags %}{{ article.tags | join: ',' }}{% endif %}">
+        {% if article.tags and article.tags.size > 0 %}
+          <div class="meta">
+            <span class="badge">{{ article.tags | first }}</span>
+          </div>
+        {% endif %}
+        <h3>{{ article.title }}</h3>
+        <p>
+          {% if article.excerpt %}
+            {{ article.excerpt | strip_html | strip_newlines | truncate: 90 }}
+          {% else %}
+            {{ article.content | strip_html | strip_newlines | truncate: 90 }}
+          {% endif %}
+        </p>
+      </a>
+      {% endfor %}
+    </div>
+
+  </main>
 </div>
+
+<script>
+(function(){
+  const ALL = "__all__";
+  const links = Array.from(document.querySelectorAll(".cat-link"));
+  const cards = Array.from(document.querySelectorAll(".card"));
+  const toggleBtn = document.querySelector(".sidebar-toggle");
+  const sidebar = document.querySelector(".sidebar");
+
+  function applyFilter(tag){
+    // 標記 active
+    links.forEach(a => a.classList.toggle("active", a.dataset.tag === tag));
+    // 顯示/隱藏卡片
+    cards.forEach(card => {
+      const tags = (card.getAttribute("data-tags") || "").split(",").map(s => s.trim()).filter(Boolean);
+      const show = (tag === ALL) || tags.includes(tag);
+      card.style.display = show ? "" : "none";
+    });
+  }
+
+  // 讀取網址 hash（#tag=xxx）
+  function getTagFromHash(){
+    const m = location.hash.match(/#tag=(.+)$/);
+    return m ? decodeURIComponent(m[1]) : ALL;
+  }
+
+  // 初始與 hash 變更
+  window.addEventListener("hashchange", () => applyFilter(getTagFromHash()));
+  applyFilter(getTagFromHash());
+
+  // 手機收合側欄
+  if (toggleBtn && sidebar){
+    toggleBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+  }
+})();
+</script>

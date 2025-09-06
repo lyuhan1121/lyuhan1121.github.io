@@ -1,31 +1,50 @@
+/* ===== 兩欄版型（側欄 + 主內容） ===== */
+.two-col{display:grid;grid-template-columns:260px 1fr;gap:24px}
+
+/* 側欄 */
+.sidebar{
+  position:sticky; top:24px; align-self:start;
+  background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+  padding:16px; height:max-content; box-shadow:0 2px 6px rgba(0,0,0,0.05);
+}
+.sidebar-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sidebar-title{font-weight:700;color:var(--accent)}
+.sidebar-toggle{display:none;border:1px solid #e5e7eb;background:#fff;border-radius:8px;padding:6px 10px;cursor:pointer}
+
+.sidebar-nav{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.cat-link{
+  display:block; padding:8px 10px; border-radius:8px;
+  color:#374151; border:1px solid transparent;
+}
+.cat-link:hover{background:#f3f4f6}
+.cat-link.active{
+  background:#eef2ff; border-color:#d1d5db; color:#1f2937; font-weight:600;
+}
+
+/* 主內容 */
+.main{min-width:0}
+
+/* RWD：小螢幕側欄改為可收合，兩欄變單欄 */
+@media(max-width:960px){
+  .two-col{grid-template-columns:1fr}
+  .sidebar{position:relative;top:auto}
+  .sidebar-toggle{display:inline-block}
+  .sidebar.open .sidebar-nav{display:block}
+  .sidebar .sidebar-nav{display:none}
+}
+
+/* ===== 既有的文青淺色風格（若你前面已經有，可保留） ===== */
+/* ...你原本的淺色主題變數與卡片/排版樣式放在這裡... */
+
+/* 作者介紹區塊（若未加入，請保留以下） */
 .about{
-  display:flex;
-  align-items:center;
-  gap:20px;
-  margin:40px 0;
-  padding:24px;
-  background:#fff;
-  border:1px solid #e5e7eb;
-  border-radius:14px;
+  display:flex; align-items:center; gap:20px; margin:24px 0 28px;
+  padding:24px; background:#fff; border:1px solid #e5e7eb; border-radius:14px;
   box-shadow:0 2px 6px rgba(0,0,0,0.05);
 }
-.about img{
-  width:120px;height:120px;
-  border-radius:50%;
-  object-fit:cover;
-  border:2px solid #d1d5db;
-}
-.about-text h2{
-  margin:0 0 8px;
-  font-size:20px;
-  color:var(--accent);
-}
-.about-text p{
-  margin:0;
-  font-size:15px;
-  color:var(--text);
-  line-height:1.6;
-}
+.about img{width:120px;height:120px;border-radius:50%;object-fit:cover;border:2px solid #d1d5db}
+.about-text h2{margin:0 0 8px;font-size:20px;color:var(--accent)}
+.about-text p{margin:0;font-size:15px;color:var(--text);line-height:1.6}
 @media(max-width:640px){
   .about{flex-direction:column;text-align:center}
   .about img{width:100px;height:100px}
