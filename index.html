@@ -14,9 +14,7 @@ title: 我的部落格
     <nav class="sidebar-nav">
       <a href="#tag=__all__" data-tag="__all__" class="cat-link active">全部文章</a>
 
-      {%- comment -%}
-      動態蒐集所有 tags（針對自訂 collection: site.articles）
-      {%- endcomment -%}
+      {%- comment -%} 動態蒐集 tags（來自 site.articles） {%- endcomment -%}
       {% assign _tags_blob = "" %}
       {% for a in site.articles %}
         {% if a.tags %}
@@ -27,9 +25,6 @@ title: 我的部落格
       {% endfor %}
       {% assign _tags = _tags_blob | split: "||" | sort %}
 
-      {%- comment -%}
-      去重：用 prev 記錄上一個 tag，若相同則跳過
-      {%- endcomment -%}
       {% assign _prev = "" %}
       {% for t in _tags %}
         {% if t != "" and t != _prev %}
@@ -98,27 +93,23 @@ title: 我的部落格
   const sidebar = document.querySelector(".sidebar");
 
   function applyFilter(tag){
-    // 標記 active
     links.forEach(a => a.classList.toggle("active", a.dataset.tag === tag));
-    // 顯示/隱藏卡片
     cards.forEach(card => {
-      const tags = (card.getAttribute("data-tags") || "").split(",").map(s => s.trim()).filter(Boolean);
+      const tags = (card.getAttribute("data-tags") || "")
+        .split(",").map(s => s.trim()).filter(Boolean);
       const show = (tag === ALL) || tags.includes(tag);
       card.style.display = show ? "" : "none";
     });
   }
 
-  // 讀取網址 hash（#tag=xxx）
   function getTagFromHash(){
     const m = location.hash.match(/#tag=(.+)$/);
     return m ? decodeURIComponent(m[1]) : ALL;
   }
 
-  // 初始與 hash 變更
   window.addEventListener("hashchange", () => applyFilter(getTagFromHash()));
   applyFilter(getTagFromHash());
 
-  // 手機收合側欄
   if (toggleBtn && sidebar){
     toggleBtn.addEventListener("click", () => {
       sidebar.classList.toggle("open");
