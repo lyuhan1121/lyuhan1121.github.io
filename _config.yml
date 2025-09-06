@@ -1,0 +1,15 @@
+title: 我的部落格
+description: 
+url: "https://your-username.github.io"
+baseurl: ""
+timezone: Asia/Taipei
+markdown: kramdown
+theme: null
+
+# 讓網址乾淨：/articles/文章標題/
+permalink: /:collection/:title/
+
+# 自訂 collection：articles
+collections:
+  articles:
+    output: true   # 讓每篇文章輸出為獨立頁面

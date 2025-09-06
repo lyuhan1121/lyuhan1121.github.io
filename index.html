@@ -11,21 +11,23 @@ title: 我的部落格
   </div>
 
   <div class="grid">
-    {% assign posts_sorted = site.posts | sort: 'date' | reverse %}
-    {% for post in posts_sorted %}
-    <a class="card" href="{{ post.url | relative_url }}">
-      <div class="meta">
-        <span>{{ post.date | date: "%Y-%m-%d" }}</span>
-        {% if post.tags and post.tags.size > 0 %}
-          <span class="badge">{{ post.tags | first }}</span>
-        {% endif %}
-      </div>
-      <h3>{{ post.title }}</h3>
+    {%- comment -%}
+    你可以改為 sort: 'title' 或在文章 front matter 設定 weight 之後 sort: 'weight'
+    {%- endcomment -%}
+    {% assign items = site.articles | sort: 'title' %}
+    {% for article in items %}
+    <a class="card" href="{{ article.url | relative_url }}">
+      {% if article.tags and article.tags.size > 0 %}
+        <div class="meta">
+          <span class="badge">{{ article.tags | first }}</span>
+        </div>
+      {% endif %}
+      <h3>{{ article.title }}</h3>
       <p>
-        {% if post.excerpt %}
-          {{ post.excerpt | strip_html | strip_newlines | truncate: 90 }}
+        {% if article.excerpt %}
+          {{ article.excerpt | strip_html | strip_newlines | truncate: 90 }}
         {% else %}
-          {{ post.content | strip_html | strip_newlines | truncate: 90 }}
+          {{ article.content | strip_html | strip_newlines | truncate: 90 }}
         {% endif %}
       </p>
     </a>
