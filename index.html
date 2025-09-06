@@ -1,7 +1,3 @@
----
-layout: default
-title: 我的部落格
----
 <div class="container">
   <div class="header">
     <div>
@@ -10,10 +6,20 @@ title: 我的部落格
     </div>
   </div>
 
+  <!-- 👇 作者介紹區塊 -->
+  <div class="about">
+    <img src="{{ '/assets/img/profile.jpg' | relative_url }}" alt="作者照片">
+    <div class="about-text">
+      <h2>關於我</h2>
+      <p>
+        哈囉！我是某某，一個喜歡閱讀、寫作與程式設計的文青系研究生。  
+        這裡紀錄我的隨筆、研究和生活心得，希望透過文字與更多人交流 🌿
+      </p>
+    </div>
+  </div>
+  <!-- 👆 作者介紹區塊 -->
+
   <div class="grid">
-    {%- comment -%}
-    你可以改為 sort: 'title' 或在文章 front matter 設定 weight 之後 sort: 'weight'
-    {%- endcomment -%}
     {% assign items = site.articles | sort: 'title' %}
     {% for article in items %}
     <a class="card" href="{{ article.url | relative_url }}">
